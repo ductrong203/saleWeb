@@ -10,9 +10,9 @@ const authMiddleWare = (req, res, next) => {
         Message: "The Authentication",
       });
     }
-    const { payload } = decoded;
-    if (payload.isAdmin) {
-      console.log("isAdmin:", payload.isAdmin);
+
+    if (decoded.isAdmin) {
+      console.log("isAdmin:", decoded.isAdmin);
       next();
     } else {
       return res.status(404).json({
@@ -32,8 +32,7 @@ const authUSerMiddleWare = (req, res, next) => {
         Message: "The Authentication",
       });
     }
-    const { payload } = decoded;
-    if (payload?.isAdmin || payload?.id == userId) {
+    if (decoded?.isAdmin || decoded?.id == userId) {
       next();
     } else {
       return res.status(404).json({

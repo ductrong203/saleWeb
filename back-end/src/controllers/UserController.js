@@ -7,7 +7,7 @@ const createUser = async (req, res) => {
     const { name, email, password, confirmPassword, phone, isAdmin } = req.body;
     var reg = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
     const isCheckEmail = reg.test(email);
-    if (!name || !email || !password || !confirmPassword || !phone) {
+    if (!email || !password || !confirmPassword) {
       return res.status(200).json({
         status: "ERR",
         message: "the input is required",
@@ -49,12 +49,30 @@ const loginUser = async (req, res) => {
         message: "the email is invalid !",
       });
     }
-    const reponse = await UserService.loginUser(req.body);
-    return res.status(200).json(reponse);
+    const response = await UserService.loginUser(req.body);
+    const { refresh_token, ...newReponse } = response;
+    res.cookie("refresh_token", refresh_token, {
+      httpOnly: true,
+      secure: false,
+      samesite: "strict",
+    });
+    return res.status(200).json(newReponse);
   } catch (error) {
     return res.status(404).json({
       message: e,
     });
+  }
+};
+//log out user
+const logoutUser = async (req, res) => {
+  try {
+    res.clearCookie("refresh_token");
+    return res.status(200).json({
+      status: "OK",
+      message: "Log out successfully!",
+    });
+  } catch (error) {
+    return res.status(404).json({ message: e });
   }
 };
 // delete user
@@ -130,7 +148,7 @@ const updateUser = async (req, res) => {
 //refresh token
 const refreshToken = async (req, res) => {
   try {
-    const token = req.headers.token.split(" ")[1];
+    const token = req.cookies.refresh_token;
     if (token == null) {
       return res.status(200).json({
         message: "token is required!",
@@ -151,4 +169,5 @@ module.exports = {
   getDetailUser,
   updateUser,
   refreshToken,
+  logoutUser,
 };

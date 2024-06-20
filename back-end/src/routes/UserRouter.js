@@ -7,6 +7,7 @@ const {
 } = require("../middleWare/authMiddleWare");
 router.post("/sign-up", UserController.createUser);
 router.post("/sign-in", UserController.loginUser);
+router.post("/log-out", UserController.logoutUser);
 router.delete("/delete-user/:id", authMiddleWare, UserController.deleteUser);
 router.get("/get-all", authMiddleWare, UserController.getAllUser);
 router.get(
@@ -14,6 +15,6 @@ router.get(
   authUSerMiddleWare,
   UserController.getDetailUser
 );
-router.put("/update-user/:id", UserController.updateUser);
+router.put("/update-user/:id", authUSerMiddleWare, UserController.updateUser);
 router.post("/refresh-token", UserController.refreshToken);
 module.exports = router;

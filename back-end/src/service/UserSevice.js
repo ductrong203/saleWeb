@@ -10,7 +10,7 @@ const createUser = (newUser) => {
       const checkUser = await User.findOne({ email: email });
       if (checkUser !== null) {
         resolve({
-          status: "OK",
+          status: "ERR",
           message: "this email has already exited! Please try another email !",
         });
       }
@@ -51,7 +51,6 @@ const loginUser = (user) => {
       //const checkpass = password == checkUser.password;
 
       const comparePassword = Bcrypt.compareSync(password, checkUser.password);
-      console.log("comparePassword", comparePassword);
       if (!comparePassword) {
         resolve({
           status: "ERR",
@@ -66,7 +65,6 @@ const loginUser = (user) => {
         id: checkUser.id,
         isAdmin: checkUser.isAdmin,
       });
-      console.log("access_token", access_token);
       resolve({
         status: "OK",
         message: "Success!",
